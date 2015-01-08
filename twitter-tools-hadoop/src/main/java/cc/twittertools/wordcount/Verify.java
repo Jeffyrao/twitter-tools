@@ -40,9 +40,9 @@ public class Verify {
 		// TODO Auto-generated method stub
 		String filePath = "output/sample-bigram.counts";
 		String huffmanTreePath = "output/sample-huffmantree.txt";
-		MemoryCounts M = MemoryCounts.load(filePath);
+		//MemoryCounts M = MemoryCounts.load(filePath);
 		huffmanTree = HuffmanEncoding.loadHuffmanTree(huffmanTreePath);
-		verify(M);
+		//verify(M);
 	}
 
 }

@@ -46,21 +46,26 @@ public class FeatureGenerator {
 			TweetSet tweetSet = query2TweetSet.get(topic.id);
 			
 			double sum = 0;
-			// prepare unigram statistics
-			List<Integer> unigramCounts = topic.getUnigramCount(topic.maxUnigram);
-			double maxUnigramEntropy = topic.unigramEntropy.get(topic.maxUnigram) - TopicTrendSet.MIN_ENTROPY;
-			for (int count: unigramCounts) {
-				sum += count;
-			}
-			double[] data = new double[unigramCounts.size()];
-			double[] weights = new double[unigramCounts.size()];
-			for (int i = 0; i < weights.length; i++) {
-				data[i] = i * (TopicTrendSet.TIME_SPAN / unigramCounts.size());
-				weights[i] = unigramCounts.get(i) / sum;
-			}
-			Data unigramData = new Data(data, weights);
-			unigramData.computeStatistics();
+			double maxUnigramEntropy = 0;
+			double[] data, weights;
+			Data unigramData = null;
 			NormalDist kern = new NormalDist();
+			// prepare unigram statistics
+			if (topic.maxUnigram != null) {
+				List<Integer> unigramCounts = topic.getUnigramCount(topic.maxUnigram);
+				maxUnigramEntropy = topic.unigramEntropy.get(topic.maxUnigram) - TopicTrendSet.MIN_ENTROPY;
+				for (int count: unigramCounts) {
+					sum += count;
+				}
+				data = new double[unigramCounts.size()];
+				weights = new double[unigramCounts.size()];
+				for (int i = 0; i < weights.length; i++) {
+					data[i] = i * (TopicTrendSet.TIME_SPAN / unigramCounts.size());
+					weights[i] = unigramCounts.get(i) / sum;
+				}
+				unigramData = new Data(data, weights);
+				unigramData.computeStatistics();
+			}
 			
 			// prepare bigram statistics
 			double maxBigramEntropy = 0;
@@ -72,6 +77,8 @@ public class FeatureGenerator {
 				for (int count: bigramCounts) {
 					sum += count;
 				}
+				data = new double[bigramCounts.size()];
+				weights = new double[bigramCounts.size()];
 				for (int i = 0; i < weights.length; i++) {
 					data[i] = i * (TopicTrendSet.TIME_SPAN / bigramCounts.size());
 					weights[i] = bigramCounts.get(i) / sum;
@@ -83,8 +90,10 @@ public class FeatureGenerator {
 			// get unigram and bigram features
 			for (Tweet tweet: tweetSet) {
 				double tweetTime = tweet.getTimeDiff() * 1.0f / Model.TIME_INTERVAL;
-				double unigramDensity = WeightKDE.computeDensity(unigramData, kern, tweetTime);
-				double bigramDensity = 0; 
+				double unigramDensity = 0, bigramDensity = 0; 
+				if (topic.maxUnigram != null) {
+					unigramDensity = WeightKDE.computeDensity(unigramData, kern, tweetTime);
+				}
 				if (topic.maxBigram != null) {
 					bigramDensity = WeightKDE.computeDensity(bigramData, kern, tweetTime);
 				}

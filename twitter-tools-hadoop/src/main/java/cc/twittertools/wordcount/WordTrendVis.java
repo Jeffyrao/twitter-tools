@@ -85,9 +85,15 @@ public class WordTrendVis {
 				int endIndex = line.indexOf(" </num>");
 				queryId = Integer.parseInt(line.substring(beginIndex+2, endIndex));
 			}
-			if (line.startsWith("<title>")) {
-				int beginIndex = line.indexOf("<title> ");
-				int endIndex = line.indexOf(" </title>");
+			if (line.startsWith("<title>") || line.startsWith("<query>")) {
+			  int beginIndex = 0, endIndex = 0;
+			  if (line.startsWith("<title>")) {
+			    beginIndex = line.indexOf("<title> ");
+			    endIndex = line.indexOf(" </title>");
+			  } else {
+			    beginIndex = line.indexOf("<query> ");
+          endIndex = line.indexOf(" </query>");
+			  }
 				queryStr = line.substring(beginIndex+8, endIndex).toLowerCase();
 				String[] words = queryStr.split("[^a-z0-9\\-]+");
 				String[] bigrams = new String[words.length - 1];
@@ -183,6 +189,7 @@ public class WordTrendVis {
 			Query query = queryMap.get(queryId);
 			jsonWriter.name(String.valueOf(query.queryId)).beginObject();
 			jsonWriter.name("query").value(query.query);
+			jsonWriter.name("querytime").value(query.time);
 			jsonWriter.name("words").beginObject();
 			for(String word : query.ngram.keySet()) {
 				jsonWriter.name(word).beginArray();

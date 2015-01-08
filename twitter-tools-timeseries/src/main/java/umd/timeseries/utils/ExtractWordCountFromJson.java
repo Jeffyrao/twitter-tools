@@ -51,6 +51,8 @@ public class ExtractWordCountFromJson {
 						}
 					}
 					reader.endObject();
+				} else if (name.equals("querytime")) {
+					String querytime = reader.nextString();
 				}
 			}
 			reader.endObject();
