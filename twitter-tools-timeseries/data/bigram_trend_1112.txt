@@ -5248,5 +5248,51 @@
 		"query": "gasland",
 		"querytime": "Sun Feb 06 23:16:42 +0000 2011",
 		"words": {}
+	},
+	"110": {
+		"query": "economic trade sanctions",
+		"querytime": "Tue Feb 08 04:58:53 +0000 2011",
+		"words": {
+			"economic trade": [
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"trade sanctions": [
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0
+			]
+		}
 	}
 }

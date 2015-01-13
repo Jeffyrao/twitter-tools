@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.apple.crypto.provider.Debug;
 import com.google.common.collect.Table;
 import com.google.common.primitives.Doubles;
 
@@ -45,6 +46,11 @@ public class FeatureGenerator {
 			TopicTrend topic = iter.next();
 			TweetSet tweetSet = query2TweetSet.get(topic.id);
 			
+			if (!qrels.containsRow(topic.id)) {
+				System.out.println(topic.id);
+				continue;
+			}
+			
 			double sum = 0;
 			double maxUnigramEntropy = 0;
 			double[] data, weights;
@@ -53,14 +59,14 @@ public class FeatureGenerator {
 			// prepare unigram statistics
 			if (topic.maxUnigram != null) {
 				List<Integer> unigramCounts = topic.getUnigramCount(topic.maxUnigram);
-				maxUnigramEntropy = topic.unigramEntropy.get(topic.maxUnigram) - TopicTrendSet.MIN_ENTROPY;
+				maxUnigramEntropy = topic.unigramEntropy.get(topic.maxUnigram) - topic.MIN_ENTROPY;
 				for (int count: unigramCounts) {
 					sum += count;
 				}
 				data = new double[unigramCounts.size()];
 				weights = new double[unigramCounts.size()];
 				for (int i = 0; i < weights.length; i++) {
-					data[i] = i * (TopicTrendSet.TIME_SPAN / unigramCounts.size());
+					data[i] = i * (topic.timespan * 1.0 / unigramCounts.size());
 					weights[i] = unigramCounts.get(i) / sum;
 				}
 				unigramData = new Data(data, weights);
@@ -72,7 +78,7 @@ public class FeatureGenerator {
 			Data bigramData = null;
 			if (topic.maxBigram != null) {
 				List<Integer> bigramCounts = topic.getBigramCount(topic.maxBigram);
-				maxBigramEntropy = topic.bigramEntropy.get(topic.maxBigram) - TopicTrendSet.MIN_ENTROPY;
+				maxBigramEntropy = topic.bigramEntropy.get(topic.maxBigram) - topic.MIN_ENTROPY;
 				sum = 0;
 				for (int count: bigramCounts) {
 					sum += count;
@@ -80,7 +86,7 @@ public class FeatureGenerator {
 				data = new double[bigramCounts.size()];
 				weights = new double[bigramCounts.size()];
 				for (int i = 0; i < weights.length; i++) {
-					data[i] = i * (TopicTrendSet.TIME_SPAN / bigramCounts.size());
+					data[i] = i * (topic.timespan * 1.0 / bigramCounts.size());
 					weights[i] = bigramCounts.get(i) / sum;
 				}
 				bigramData = new Data(data, weights);
@@ -97,10 +103,14 @@ public class FeatureGenerator {
 				if (topic.maxBigram != null) {
 					bigramDensity = WeightKDE.computeDensity(bigramData, kern, tweetTime);
 				}
-				int label = qrels.contains(topic.id, tweet.getId()) ? 1 : -1;
-				bw.write(String.format("%d qid:%d 1:%.7f 2:%.7f 3:%.7f 4:%.7f 5:%.7f # %d\n", label, 
-						topic.id, tweet.getQlScore(), maxUnigramEntropy, unigramDensity, 
-						maxBigramEntropy, bigramDensity, tweet.getId()));
+				int label = qrels.contains(topic.id, tweet.getId()) ? 1 : 0;
+				double unigramLogDensity = (unigramDensity == 0) ? 0 : Math.log(unigramDensity);
+				double bigramLogDensity = (bigramDensity == 0) ? 0 : Math.log(bigramDensity);
+				double unigramProduct = unigramDensity * maxUnigramEntropy;
+				double bigramProduct = bigramDensity * maxBigramEntropy;
+				bw.write(String.format("%d qid:%d 1:%.7f 2:%.7f 3:%.7f 4:%.7f 5:%.7f 6:%.7f 7:%.7f # %d\n", label, 
+						topic.id, tweet.getQlScore(), maxUnigramEntropy, unigramLogDensity, 
+						maxBigramEntropy, bigramLogDensity, unigramProduct, bigramProduct, tweet.getId()));
 			}
 		}
 		

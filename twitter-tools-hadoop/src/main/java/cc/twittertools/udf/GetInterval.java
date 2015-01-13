@@ -13,6 +13,7 @@ public class GetInterval extends EvalFunc<String>{
 		//Standard Time Format: Tue Feb 08 23:59:59 +0000 2011
 		try{
 			String str = (String) input.get(0);
+			if(str == null) return null;
 			String[] groups = str.split("\\s+");
 			String time = groups[3];
 			String[] timeGroups= time.split(":");
@@ -20,7 +21,8 @@ public class GetInterval extends EvalFunc<String>{
 			//int interval = Integer.valueOf(timeGroups[0]);
 			return String.valueOf(interval);
 		}catch(Exception e){
-			throw new IOException("caught exception",e);
+		  throw new IOException("caught exception: " + input.toString() + "isNull:"
+          + (input==null) + ", size:" + input.size(), e);
 		}
 	}
 }

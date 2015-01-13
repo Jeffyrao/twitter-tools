@@ -19,13 +19,15 @@ public class GetDate extends EvalFunc<String>{
 		//Standard Time Format: Tue Feb 08 23:59:59 +0000 2011
 		try{
 			String str = (String) input.get(0);
+			if (str == null) return null;
 			String[] groups = str.split("\\s+");
 			String year = groups[5];
 			String month = groups[1];
 			String day= groups[2];
 			return year+" "+month+" "+day;
-		}catch(Exception e){
-			throw new IOException("caught exception", e);
+		}catch(Exception e) {
+			throw new IOException("caught exception: " + input.toString() + "isNull:"
+			    + (input==null) + ", size:" + input.size(), e);
 		}
 	}
 

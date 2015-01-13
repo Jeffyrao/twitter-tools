@@ -28,6 +28,7 @@ public class LuceneBigramTokenizer extends EvalFunc<DataBag>{
 	    try {
 	        DataBag output = mBagFactory.newDefaultBag();
 	        Object o = input.get(0);
+	        if (o == null) return null;
 	        if (!(o instanceof String)) {
 	            throw new IOException("Expected input to be chararray, but  got " + o.getClass().getName());
 	        }
@@ -48,7 +49,8 @@ public class LuceneBigramTokenizer extends EvalFunc<DataBag>{
 	        return output;
 	    } catch (Exception e) {
 	        // error handling goes here
-	    	throw new IOException("caught exception",e);
+	      throw new IOException("caught exception: " + input.toString() + "isNull:"
+            + (input==null) + ", size:" + input.size(), e);
 	    }
     }
 }

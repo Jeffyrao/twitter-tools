@@ -53,9 +53,12 @@ public class ExtractWordCountFromJson {
 					reader.endObject();
 				} else if (name.equals("querytime")) {
 					String querytime = reader.nextString();
+					topicTrend.setQueryTime(querytime);
 				}
 			}
 			reader.endObject();
+			topicTrend.cutCounts();
+			topicTrend.computeMinEntropy();
 			topicTrendSet.add(topicTrend);
 		}
 		

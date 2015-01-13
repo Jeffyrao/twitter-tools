@@ -13,10 +13,17 @@ public class FilterNonASCIIToken extends EvalFunc<Boolean>{
 		if(input == null || input.size() == 0){
 			return false;
 		}
-		String token = (String) input.get(0);
-		boolean isAscii = CharMatcher.ASCII.matchesAllOf(token);
-		boolean isEmpty = (token.length() != 0);
-		return isAscii && isEmpty;
+		try {
+  		String token = (String) input.get(0);
+  		if (token == null) return false;
+  		boolean isAscii = CharMatcher.ASCII.matchesAllOf(token);
+  		boolean isEmpty = (token.length() != 0);
+  		return isAscii && isEmpty;
+		} catch (Exception e) {
+      // error handling goes here
+      throw new IOException("caught exception: " + input.toString() + "isNull:"
+          + (input==null) + ", size:" + input.size(), e);
+		}
 	}
 	
 }

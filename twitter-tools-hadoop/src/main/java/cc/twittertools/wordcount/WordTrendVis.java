@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class WordTrendVis {
 	public static boolean isBigram = false;
 	
 	public class Query{
-		static final int capacity = 18;
+		static final int capacity = 59;
 		int queryId;
 		String query;
 		String time;
@@ -185,7 +186,9 @@ public class WordTrendVis {
 		JsonWriter jsonWriter = new JsonWriter(bw);
 		jsonWriter.setIndent("\t");
 		jsonWriter.beginObject();
-		for (int queryId = 1; queryId < queryMap.keySet().size(); queryId++) {
+		List<Integer> queryIds = new ArrayList<Integer>(queryMap.keySet());
+		Collections.sort(queryIds);
+		for (int queryId: queryIds) {
 			Query query = queryMap.get(queryId);
 			jsonWriter.name(String.valueOf(query.queryId)).beginObject();
 			jsonWriter.name("query").value(query.query);

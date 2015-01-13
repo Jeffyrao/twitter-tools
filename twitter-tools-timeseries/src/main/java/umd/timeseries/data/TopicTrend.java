@@ -1,5 +1,6 @@
 package umd.timeseries.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,9 @@ import java.util.Map;
 public class TopicTrend {
 	public int id;
 	public String query;
+	public String queryTime;
+	public int timespan;
+	public float MIN_ENTROPY;
 	public String maxUnigram;
 	public String maxBigram;
 	public Map<String, List<Integer>> unigramCounts;
@@ -35,6 +39,11 @@ public class TopicTrend {
 		this.bigramEntropy = new HashMap<String, Float>();
 	}
 	
+	public void setQueryTime(String queryTime) {
+		this.queryTime = queryTime;
+		this.timespan = TopicTrendSet.computeDayDiff(queryTime);
+	}
+	
 	public void setUnigramCounts (Map<String, List<Integer>> unigramCounts) {
 		this.unigramCounts = unigramCounts;
 	}
@@ -51,6 +60,25 @@ public class TopicTrend {
 		this.bigramCounts.put(bigram, counts);
 	}
 	
+	public void cutCounts() {
+		for (String unigram: unigramCounts.keySet()) {
+			List<Integer> counts = new ArrayList<Integer>(unigramCounts.get(unigram).subList(0, timespan));
+			unigramCounts.put(unigram, counts);
+		}
+		for (String bigram: bigramCounts.keySet()) {
+			List<Integer> counts = new ArrayList<Integer>(bigramCounts.get(bigram).subList(0, timespan));
+			bigramCounts.put(bigram, counts);
+		}
+	}
+	
+	public void computeMinEntropy() {
+		MIN_ENTROPY = 0;
+		for (int i = 0; i < timespan; i++) {
+			float uniformProb = 1.0f / timespan;
+			MIN_ENTROPY += uniformProb * Math.log(uniformProb) / Math.log(2);
+		}
+	}
+	
 	public void computeEntropy() {
 		maxUnigram = computeEntropy(unigramCounts, unigramEntropy);
 		maxBigram = computeEntropy(bigramCounts, bigramEntropy);
@@ -65,7 +93,7 @@ public class TopicTrend {
 	}
 	
 	public String computeEntropy(Map<String, List<Integer>> counts, Map<String, Float> entropies) {
-		float maxEntropy = TopicTrendSet.MIN_ENTROPY;
+		float maxEntropy = this.MIN_ENTROPY;
 		String maxWord = null;
 		
 		if (counts.size() > 0) {
@@ -75,8 +103,8 @@ public class TopicTrend {
 				for (int count: entry.getValue()) {
 					sum += count + offset;
 				}
-				if (sum < TopicTrendSet.THRESHOLD + TopicTrendSet.TIME_SPAN * offset) {
-					entropies.put(entry.getKey(), TopicTrendSet.MIN_ENTROPY);
+				if (sum < TopicTrendSet.THRESHOLD + entry.getValue().size() * offset) {
+					entropies.put(entry.getKey(), this.MIN_ENTROPY);
 					continue;
 				}
 				for (int count: entry.getValue()) {
