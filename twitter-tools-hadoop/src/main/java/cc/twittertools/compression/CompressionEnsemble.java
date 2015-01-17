@@ -21,7 +21,7 @@ public class CompressionEnsemble {
 	public static final int HUFFMAN = 5;
 	public static final int HUFFMAN_VB = 6;
 	
-	public static enum ALG_ENUM {P4D, VB, S16, DWT_P4D, DWT_VB, HUFFMAN, HUFFMAN_VB};
+	public static enum ALG_ENUM {P4D, VB, S16, DWT_P4D, DWT_VB, HUFFMAN, HUFFMAN_VB, NOCOMPRESSION};
 	public static Map<Integer, Algorithm> algorithmMap;
 	public static CompressionEnsemble ensemble = new CompressionEnsemble();
 	public static BiMap<Unit, String> huffmanTree;
@@ -90,24 +90,34 @@ public class CompressionEnsemble {
 					decompression = WaveletCompression.VariableByteDecompression(compression);
 					endTime = System.currentTimeMillis();
 					break;
-				case 5: 
+				case 5: // HuffmanTree
 					encodeData = HuffmanEncoding.encode(counts, huffmanTree);
 					startTime = System.currentTimeMillis();
 					decompression = HuffmanEncoding.decode(encodeData, huffmanTree);
 					endTime = System.currentTimeMillis();
 					break;
-				case 6:
+				case 6: //HuffmanTree VB
 					encodeData = HuffmanEncoding.encode(counts, huffmanTree);
 					compression = VariableByteEncoding.encode(encodeData);
 					startTime = System.currentTimeMillis();
 					decompression = VariableByteEncoding.decode(compression);
 					originalData = HuffmanEncoding.decode(decompression, huffmanTree);
 					endTime = System.currentTimeMillis();
-					break;
+					break;	
+				case 7: // No Compression
+				  break;
 			}
 			
 			int algoId = algo.ordinal();
-			int bytes = (algoId != 5 ? compression.length : encodeData.length * 4);
+			int bytes;
+			if (algoId == 7) { // no compression;
+			  bytes = counts.length*4;
+			  startTime = endTime = 0;
+			} else if (algoId == 5) { // Huffman
+			  bytes = encodeData.length * 4;
+			} else {
+			  bytes = compression.length;
+			}
 			Algorithm algorithm = algorithmMap.get(algoId);
 			algorithm.increment(bytes, endTime - startTime);
 			algorithmMap.put(algoId, algorithm);

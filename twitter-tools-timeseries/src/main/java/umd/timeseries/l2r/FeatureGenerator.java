@@ -23,7 +23,9 @@ import umd.twittertools.run.RunTemporalModel;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 
 public class FeatureGenerator {
-
+	
+	public static final double AMPLIFY_ALPHA = 1;
+	
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		String searchResultFile = args[0];
@@ -61,13 +63,15 @@ public class FeatureGenerator {
 				List<Integer> unigramCounts = topic.getUnigramCount(topic.maxUnigram);
 				maxUnigramEntropy = topic.unigramEntropy.get(topic.maxUnigram) - topic.MIN_ENTROPY;
 				for (int count: unigramCounts) {
-					sum += count;
+					// sum += count;
+					sum += Math.pow(count, AMPLIFY_ALPHA);
 				}
 				data = new double[unigramCounts.size()];
 				weights = new double[unigramCounts.size()];
 				for (int i = 0; i < weights.length; i++) {
 					data[i] = i * (topic.timespan * 1.0 / unigramCounts.size());
-					weights[i] = unigramCounts.get(i) / sum;
+					// weights[i] = unigramCounts.get(i) / sum;
+					weights[i] = Math.pow(unigramCounts.get(i), AMPLIFY_ALPHA) / sum;
 				}
 				unigramData = new Data(data, weights);
 				unigramData.computeStatistics();
@@ -81,13 +85,15 @@ public class FeatureGenerator {
 				maxBigramEntropy = topic.bigramEntropy.get(topic.maxBigram) - topic.MIN_ENTROPY;
 				sum = 0;
 				for (int count: bigramCounts) {
-					sum += count;
+					//sum += count;
+					sum += Math.pow(count, AMPLIFY_ALPHA);
 				}
 				data = new double[bigramCounts.size()];
 				weights = new double[bigramCounts.size()];
 				for (int i = 0; i < weights.length; i++) {
 					data[i] = i * (topic.timespan * 1.0 / bigramCounts.size());
-					weights[i] = bigramCounts.get(i) / sum;
+					//weights[i] = bigramCounts.get(i) / sum;
+					weights[i] = Math.pow(bigramCounts.get(i), AMPLIFY_ALPHA) / sum;
 				}
 				bigramData = new Data(data, weights);
 				bigramData.computeStatistics();

@@ -9,13 +9,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TopicTrendSet implements Iterable<TopicTrend>{
-	private int year;
+	private static int year;
 	private List<TopicTrend> queries = new ArrayList<TopicTrend>();
 	
-	public static final int THRESHOLD = 5;
+	public static int THRESHOLD = 5;
 
 	public TopicTrendSet(int year) {
 		this.year = year;
+		if (this.year == 2013) {
+			THRESHOLD = 15;
+		}
 	}
 	
 	public void add(TopicTrend q) {
@@ -41,7 +44,11 @@ public class TopicTrendSet implements Iterable<TopicTrend>{
 	public static int computeDayDiff(String day) {
 		Date currDate = null, baseDate = null;
 		try {
-			baseDate = new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-23");
+			if (year == 2011) {
+				baseDate = new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-23");
+			} else {
+				baseDate = new SimpleDateFormat("yyyy-MM-dd").parse("2013-02-01");
+			}
 			currDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy").parse(day);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
