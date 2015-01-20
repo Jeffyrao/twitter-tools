@@ -13,6 +13,7 @@ public class TopicTrendSet implements Iterable<TopicTrend>{
 	private List<TopicTrend> queries = new ArrayList<TopicTrend>();
 	
 	public static int THRESHOLD = 5;
+	public static int INTERVAL = 5; // 5 minutes; 1 day interval = 24*60 = 1440 
 
 	public TopicTrendSet(int year) {
 		this.year = year;
@@ -41,13 +42,13 @@ public class TopicTrendSet implements Iterable<TopicTrend>{
 		}
 	}
 	
-	public static int computeDayDiff(String day) {
+	public static int computeIntervalSize(String day) {
 		Date currDate = null, baseDate = null;
 		try {
 			if (year == 2011) {
-				baseDate = new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-23");
+				baseDate = new SimpleDateFormat("yyyy-MM-dd Z").parse("2011-01-23 +0000");
 			} else {
-				baseDate = new SimpleDateFormat("yyyy-MM-dd").parse("2013-02-01");
+				baseDate = new SimpleDateFormat("yyyy-MM-dd Z").parse("2013-02-01 +0000");
 			}
 			currDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy").parse(day);
 		} catch (ParseException e) {
@@ -55,7 +56,9 @@ public class TopicTrendSet implements Iterable<TopicTrend>{
 			e.printStackTrace();
 		}
 		long diff = currDate.getTime() - baseDate.getTime();
-		return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) + 1;
+		long minutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+		return (int)(minutes / INTERVAL) + 1;
+		//return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) + 1;
 	}
 	
 	public static TopicTrendSet merge(TopicTrendSet unigramSet, TopicTrendSet bigramSet) {

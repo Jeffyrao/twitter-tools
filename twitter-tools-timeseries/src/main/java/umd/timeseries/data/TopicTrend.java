@@ -2,6 +2,7 @@ package umd.timeseries.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class TopicTrend {
 	
 	public void setQueryTime(String queryTime) {
 		this.queryTime = queryTime;
-		this.timespan = TopicTrendSet.computeDayDiff(queryTime);
+		this.timespan = TopicTrendSet.computeIntervalSize(queryTime);
 	}
 	
 	public void setUnigramCounts (Map<String, List<Integer>> unigramCounts) {
