@@ -61,7 +61,51 @@ public class TopicTrend {
 		this.bigramCounts.put(bigram, counts);
 	}
 	
-	public void cutCounts() {
+	public void mergeCounts() {
+		for (String unigram: unigramCounts.keySet()) {
+			List<Integer> counts = unigramCounts.get(unigram);
+			List<Integer> newCounts = new ArrayList<Integer>();
+			int size = TopicTrendSet.INTERVAL / 5;
+			int sum = 0;
+			for (int i = 0; i < counts.size(); i++) {
+				sum += counts.get(i);
+				if ((i+1) % size == 0) {
+					newCounts.add(sum);
+					sum = 0;
+				}
+			}
+			if (counts.size() % size != 0) {
+				newCounts.add(sum);
+				sum = 0;
+			}
+			unigramCounts.put(unigram, newCounts);
+		}
+		
+		for (String bigram: bigramCounts.keySet()) {
+			List<Integer> counts = bigramCounts.get(bigram);
+			List<Integer> newCounts = new ArrayList<Integer>();
+			int size = TopicTrendSet.INTERVAL / 5;
+			int sum = 0;
+			for (int i = 0; i < counts.size(); i++) {
+				sum += counts.get(i);
+				if ((i+1) % size == 0) {
+					newCounts.add(sum);
+					sum = 0;
+				}
+			}
+			if (counts.size() % size != 0) {
+				newCounts.add(sum);
+				sum = 0;
+			}
+			bigramCounts.put(bigram, newCounts);
+		}
+	}
+	
+	public void cutCounts(boolean merge) {
+		if (merge) {
+			mergeCounts();
+		}
+		
 		for (String unigram: unigramCounts.keySet()) {
 			List<Integer> counts = new ArrayList<Integer>(unigramCounts.get(unigram).subList(0, timespan));
 			unigramCounts.put(unigram, counts);

@@ -13,7 +13,7 @@ public class TopicTrendSet implements Iterable<TopicTrend>{
 	private List<TopicTrend> queries = new ArrayList<TopicTrend>();
 	
 	public static int THRESHOLD = 5;
-	public static int INTERVAL = 5; // 5 minutes; 1 day interval = 24*60 = 1440 
+	public static int INTERVAL = 1440; // 5 minutes; 1 day interval = 24*60 = 1440 
 
 	public TopicTrendSet(int year) {
 		this.year = year;

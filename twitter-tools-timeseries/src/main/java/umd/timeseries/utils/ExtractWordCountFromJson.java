@@ -57,7 +57,7 @@ public class ExtractWordCountFromJson {
 				}
 			}
 			reader.endObject();
-			topicTrend.cutCounts();
+			topicTrend.cutCounts(true);
 			topicTrend.computeMinEntropy();
 			topicTrendSet.add(topicTrend);
 		}
