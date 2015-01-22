@@ -33,14 +33,15 @@ public class LoadUnigramCount {
 	
 	private static MemoryCounts M = new MemoryCounts();
 	private static BiMap<Unit, String> huffmanTree;
-	public static int DAYS = 18;
+	public static int DAYS = 59;
 	public static int termId = 0;
 	public static int byteCounter = 0;
 	
 	public static int computeDayDiff(String day) {
 		Date currDate = null, baseDate = null;
 		try {
-			baseDate = new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-23");
+			//baseDate = new SimpleDateFormat("yyyy-MM-dd").parse("2011-01-23");
+		  baseDate = new SimpleDateFormat("yyyy-MM-dd").parse("2013-02-01");
 			currDate = new SimpleDateFormat("yyyy MMM dd").parse(day);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block

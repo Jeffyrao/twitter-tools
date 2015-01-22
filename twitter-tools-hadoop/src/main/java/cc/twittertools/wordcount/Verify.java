@@ -38,11 +38,15 @@ public class Verify {
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		// TODO Auto-generated method stub
-		String filePath = "output/sample-bigram.counts";
+		/*String filePath = "output/sample-bigram.counts";
 		String huffmanTreePath = "output/sample-huffmantree.txt";
 		//MemoryCounts M = MemoryCounts.load(filePath);
 		huffmanTree = HuffmanEncoding.loadHuffmanTree(huffmanTreePath);
-		//verify(M);
+		//verify(M);*/
+	  String queryTime = "Tue Feb 05 12:59:59 +0000 2011";
+	  String wordTime = "2011 Feb 03";
+	  System.out.println(WordTrendVis.computeDayDiff(queryTime, wordTime));
+	  
 	}
 
 }
