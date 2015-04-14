@@ -24,7 +24,7 @@ import umontreal.iro.lecuyer.probdist.NormalDist;
 
 public class FeatureGenerator {
 	
-	public static final double AMPLIFY_ALPHA = 1;
+	public static final double AMPLIFY_ALPHA = 1.0;
 	
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
@@ -48,7 +48,7 @@ public class FeatureGenerator {
 			TopicTrend topic = iter.next();
 			TweetSet tweetSet = query2TweetSet.get(topic.id);
 			
-			if (!qrels.containsRow(topic.id)) {
+			if (!qrels.containsRow(topic.id) || tweetSet == null) {
 				System.out.println(topic.id);
 				continue;
 			}
@@ -69,7 +69,7 @@ public class FeatureGenerator {
 				data = new double[unigramCounts.size()];
 				weights = new double[unigramCounts.size()];
 				for (int i = 0; i < weights.length; i++) {
-					data[i] = i * (topic.timespan * 1.0 / unigramCounts.size());
+					data[i] = i * (TopicTrendSet.INTERVAL * 1.0 / 1440);
 					// weights[i] = unigramCounts.get(i) / sum;
 					weights[i] = Math.pow(unigramCounts.get(i), AMPLIFY_ALPHA) / sum;
 				}
@@ -91,7 +91,7 @@ public class FeatureGenerator {
 				data = new double[bigramCounts.size()];
 				weights = new double[bigramCounts.size()];
 				for (int i = 0; i < weights.length; i++) {
-					data[i] = i * (topic.timespan * 1.0 / bigramCounts.size());
+					data[i] = i * (TopicTrendSet.INTERVAL * 1.0 / 1440);
 					//weights[i] = bigramCounts.get(i) / sum;
 					weights[i] = Math.pow(bigramCounts.get(i), AMPLIFY_ALPHA) / sum;
 				}

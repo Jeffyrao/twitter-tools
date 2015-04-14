@@ -1,0 +1,37 @@
+
+
+Score: 
+java -jar RankLib-2.1-patched.jar -train features/test_features_ScoreBasedWeight_2011.txt -test features/train_features_ScoreBasedWeight_2011.txt -ranker 4 -metric2t P@30 -metric2T P@30 -save model/score_p30_train_odd_test_even.txt
+
+java -jar RankLib-2.1-patched.jar -load model/score_p30_train_odd_test_even.txt -test features/train_features_ScoreBasedWeight_2011.txt -metric2T P@30 -idv output/score_p30_train_odd_test_even.txt
+
+../paired-randomization-test-v2.pl -t a output/baseline_p30_train_odd_test_even.txt output/timeseries_p30_train_odd_test_even.txt
+
+Rank:
+
+java -jar RankLib-2.1-patched.jar -train features/test_features_RankBasedWeight_2011.txt -test features/train_features_RankBasedWeight_2011.txt -ranker 4 -metric2t P@30 -metric2T P@30 -save model/rank_p30_train_odd_test_even.txt
+
+java -jar RankLib-2.1-patched.jar -load model/rank_p30_train_odd_test_even.txt -test features/train_features_RankBasedWeight_2011.txt -metric2T P@30 -idv output/rank_p30_train_odd_test_even.txt
+
+Feedback:
+
+java -jar RankLib-2.1-patched.jar -train features/train_features_FeedbackWeight_2013.txt -test features/test_features_FeedbackWeight_2013.txt -ranker 4 -metric2t NDCG@30 -metric2T NDCG@30
+
+java -jar RankLib-2.1-patched.jar -train features/test_features_FeedbackWeight_2013.txt -test features/train_features_FeedbackWeight_2013.txt -ranker 4 -metric2t NDCG@30 -metric2T NDCG@30
+
+TimeSeries:
+
+(1) Training on odd, Testing on even
+java -jar RankLib-2.1-patched.jar -train features/test_features.2011.total.v2.txt -test features/train_features.2011.total.v2.txt -ranker 4 -metric2t P@30 -metric2T P@30 -feature feature_usage/12345.txt -save model/timeseries_p30_train_odd_test_even.txt
+
+java -jar RankLib-2.1-patched.jar -test features/train_features.2011.total.v2.txt -metric2T P@30 -idv output/timeseries_p30_train_odd_test_even.txt -load model/timeseries_p30_train_odd_test_even.txt
+
+perl ../paired-randomization-test-v2.pl -t a output/baseline_p30_train_odd_test_even.txt output/timeseries_p30_train_odd_test_even.txt
+
+(2) Training on even, Testing on odd
+java -jar RankLib-2.1-patched.jar -train features/train_features.2011.total.v2.txt -test features/test_features.2011.total.v2.txt -ranker 4 -metric2t P@30 -metric2T P@30 -feature feature_usage/12345.txt -save model/timeseries_p30_train_even_test_odd.txt
+
+java -jar RankLib-2.1-patched.jar -test features/test_features.2011.total.v2.txt -metric2T P@30 -idv output/timeseries_p30_train_even_test_odd.txt -load model/timeseries_p30_train_even_test_odd.txt
+
+perl ../paired-randomization-test-v2.pl -t a output/baseline_p30_train_even_test_odd.txt output/timeseries_p30_train_even_test_odd.txt
+
