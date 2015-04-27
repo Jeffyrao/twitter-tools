@@ -40,32 +40,32 @@ public class EvaluationFeatures
 		//double b1 = 2.8682;
 		//double b2 = 2.8337;
 		//double b3 = 0.5;
-		/*int year = 2011;
+		int year = 2011;
 		String searchResultFile = "data/ql.2011.total.txt";
 		String qrelsFile = "data/qrels.2011.total.txt";
 		String unigramFile = "data/unigram_trend_5min_1112.txt";
 		String bigramFile = "data/bigram_trend_5min_1112.txt";
-		String featureFile = "features/features_Regression_1112.txt";*/
+		String featureFile = "features/features_Regression_1112.txt";
 		
 		// 1314
 //		double e1 = -1.5446;
 //		double e2 = -1.0278;
-		int year = 2013;
+		/*int year = 2013;
 		String searchResultFile = "data/ql.2013.total.txt";
 		String qrelsFile = "data/qrels.2013.total.txt";
 		String unigramFile = "data/unigram_trend_5min_1314.txt";
-		String bigramFile = "data/bigram_trend_5min_1314_v2.txt";
-		String featureFile = "features/features_Regression_1314.txt";
+		String bigramFile = "data/bigram_trend_5min_1314.txt";
+		String featureFile = "features/features_Regression_1314.txt";*/
 		
 		Map<Integer, TweetSet> query2TweetSet = TweetSet.fromFile(searchResultFile);
 		Table<Integer, Long, Integer> qrels = RunTemporalModel.loadGroundTruth(qrelsFile);
-		TopicTrendSet unigramTrends = ExtractWordCountFromJson.read(unigramFile, false, year);
-		TopicTrendSet bigramTrends = ExtractWordCountFromJson.read(bigramFile, true, year);
+		TopicTrendSet unigramTrends = ExtractWordCountFromJson.read(unigramFile, false, year, false);
+		TopicTrendSet bigramTrends = ExtractWordCountFromJson.read(bigramFile, true, year, false);
 		TopicTrendSet mergeTrends = TopicTrendSet.merge(unigramTrends, bigramTrends);
 		mergeTrends.computeEntropy();
 		
 		// read trained parameter b;
-		List<String> lines = Files.readLines(new File("matlab/b_sol_fbs_2013.txt"), Charsets.US_ASCII);
+		List<String> lines = Files.readLines(new File("matlab/b_sol_logistic.txt"), Charsets.US_ASCII);
 		List<Double> b = new ArrayList<Double>();
 		for (String line: lines) {
 			b.add(Double.parseDouble(line));
@@ -106,6 +106,9 @@ public class EvaluationFeatures
 				KDEData data = new KDEData( termCounts, false);
 				termKDEMap.put( term, data );
 			}
+			
+			//System.out.println("unigramSum: " + unigramSum + "bigramSum: " + bigramSum);
+			
 			
 			TweetSet ts = query2TweetSet.get( topic.id );
 			for( int i = 0; i < ts.size(); ++i )

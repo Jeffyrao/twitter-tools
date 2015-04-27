@@ -36,8 +36,8 @@ public class FeatureGenerator {
 		int year = Integer.parseInt(args[5]);
 		Map<Integer, TweetSet> query2TweetSet = TweetSet.fromFile(searchResultFile);
 		Table<Integer, Long, Integer> qrels = RunTemporalModel.loadGroundTruth(qrelsFile);
-		TopicTrendSet unigramTrends = ExtractWordCountFromJson.read(unigramFile, false, year);
-		TopicTrendSet bigramTrends = ExtractWordCountFromJson.read(bigramFile, true, year);
+		TopicTrendSet unigramTrends = ExtractWordCountFromJson.read(unigramFile, false, year, false);
+		TopicTrendSet bigramTrends = ExtractWordCountFromJson.read(bigramFile, true, year, false);
 		TopicTrendSet mergeTrends = TopicTrendSet.merge(unigramTrends, bigramTrends);
 		mergeTrends.computeEntropy();
 		

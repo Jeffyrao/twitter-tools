@@ -101,18 +101,38 @@ public class TopicTrend {
 		}
 	}
 	
-	public void cutCounts(boolean merge) {
+	public void cutCounts(boolean merge, boolean substract) {
 		if (merge) {
 			mergeCounts();
 		}
 		
 		for (String unigram: unigramCounts.keySet()) {
 			List<Integer> counts = new ArrayList<Integer>(unigramCounts.get(unigram).subList(0, timespan));
-			unigramCounts.put(unigram, counts);
+			List<Integer> newcounts = new ArrayList<Integer>();
+			if (substract) {
+				int min = Integer.MAX_VALUE;
+				for (int count: counts) min = Math.min(min, count);			
+				for (int i = 0; i < counts.size(); i++) {
+					newcounts.add(counts.get(i) - min);
+				}
+			} else {
+				newcounts = counts;
+			}
+			unigramCounts.put(unigram, newcounts);
 		}
 		for (String bigram: bigramCounts.keySet()) {
 			List<Integer> counts = new ArrayList<Integer>(bigramCounts.get(bigram).subList(0, timespan));
-			bigramCounts.put(bigram, counts);
+			List<Integer> newcounts = new ArrayList<Integer>();
+			if (substract) {
+				int min = Integer.MAX_VALUE;
+				for (int count: counts) min = Math.min(min, count);			
+				for (int i = 0; i < counts.size(); i++) {
+					newcounts.add(counts.get(i) - min);
+				}
+			} else {
+				newcounts = counts;
+			}
+			bigramCounts.put(bigram, newcounts);
 		}
 	}
 	

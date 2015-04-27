@@ -26,7 +26,9 @@ public class KDEData
 		{
 			sum += count;
 		}
-		if( sum > TopicTrendSet.THRESHOLD || isQuery == true )
+		
+		isValid = validData(counts);
+		if(isValid == true || isQuery == true )
 		{
 			isValid = true;
 			points = new double[historyLength];
@@ -63,6 +65,16 @@ public class KDEData
 			}
 			ratioMaxOne = 1 / ( KDEWeightsMax * ratioSumOne );
 		}
+	}
+	
+	private boolean validData(List<Integer> counts) {
+		double sum = 0, max = Integer.MIN_VALUE, min = Integer.MAX_VALUE;
+		for (int count: counts) {
+			sum += count;
+			max = Math.max(max, count);
+			min = Math.min(min, count);
+		}
+		return sum > TopicTrendSet.THRESHOLD && max-min >= 5;
 	}
 	
 	public boolean isValid()

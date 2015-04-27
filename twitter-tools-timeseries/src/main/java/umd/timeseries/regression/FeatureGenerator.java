@@ -20,41 +20,41 @@ import umd.twittertools.run.RunTemporalModel;
 
 public class FeatureGenerator
 {
-//	private static final int interval = 3600;	// 1 slots for 1 hour
-//	private static final int interval = 21600;	// 4 slots for 1 day
-	private static final int interval = 86400;	// 1 slots for 1 day
+//	public static final int interval = 3600;	// 1 slots for 1 hour
+//	public static final int interval = 21600;	// 4 slots for 1 day
+	public static final int interval = 86400;	// 1 slots for 1 day
 //	private static final int sample_n = 17;
 	
 	// 1112
-	private static final int max_second = 59 * 24 * 60 * 60;
-	private static final int unigram_n = 10;
-	private static final int bigram_n = 10;
-	
-	// 1314
-/*	private static final int max_second = 59 * 24 * 60 * 60;
+/*	private static final int max_second = 17 * 24 * 60 * 60;
 	private static final int unigram_n = 10;
 	private static final int bigram_n = 10;
 */	
+	// 1314
+	private static final int max_second = 17 * 24 * 60 * 60;
+	private static final int unigram_n = 10;
+	private static final int bigram_n = 100;
+	
 	public static void main( String[] args ) throws IOException
 	{
-		/*int year = 2011;
+		int year = 2011;
 		String searchResultFile = "data/ql.2011.total.txt";
 		String qrelsFile = "data/qrels.2011.total.txt";
 		String unigramFile = "data/unigram_trend_5min_1112.txt";
 		String bigramFile = "data/bigram_trend_5min_1112.txt";
-		String featureFile = "data/features_regression_1112.txt";*/
+		String featureFile = "data/features_regression_1112.txt";
 		
-		int year = 2013;
+		/*int year = 2013;
 		String searchResultFile = "data/ql.2013.total.txt";
 		String qrelsFile = "data/qrels.2013.total.txt";
 		String unigramFile = "data/unigram_trend_5min_1314.txt";
-		String bigramFile = "data/bigram_trend_5min_1314_v2.txt";
-		String featureFile = "data/features_regression_1314.txt";
+		String bigramFile = "data/bigram_trend_5min_1314.txt";
+		String featureFile = "data/features_regression_1314.txt";*/
 		
 		Map<Integer, TweetSet> query2TweetSet = TweetSet.fromFile(searchResultFile);
 		Table<Integer, Long, Integer> qrels = RunTemporalModel.loadGroundTruth(qrelsFile);
-		TopicTrendSet unigramTrends = ExtractWordCountFromJson.read(unigramFile, false, year);
-		TopicTrendSet bigramTrends = ExtractWordCountFromJson.read(bigramFile, true, year);
+		TopicTrendSet unigramTrends = ExtractWordCountFromJson.read(unigramFile, false, year, false);
+		TopicTrendSet bigramTrends = ExtractWordCountFromJson.read(bigramFile, true, year, false);
 		TopicTrendSet mergeTrends = TopicTrendSet.merge(unigramTrends, bigramTrends);
 		mergeTrends.computeEntropy();
 		

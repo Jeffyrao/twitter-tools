@@ -20,7 +20,7 @@ public class ExtractWordCountFromJson {
 	
 	static Gson gson = new Gson();
 	
-	public static TopicTrendSet read (String path, boolean isBigram, int year) throws IOException {
+	public static TopicTrendSet read (String path, boolean isBigram, int year, boolean substract) throws IOException {
 		TopicTrendSet topicTrendSet = new TopicTrendSet(year);
 		JsonReader reader = new JsonReader(new FileReader(path));
 		reader.beginObject();
@@ -57,7 +57,7 @@ public class ExtractWordCountFromJson {
 				}
 			}
 			reader.endObject();
-			topicTrend.cutCounts(true);
+			topicTrend.cutCounts(true, substract);
 			topicTrend.computeMinEntropy();
 			topicTrendSet.add(topicTrend);
 		}
@@ -68,7 +68,7 @@ public class ExtractWordCountFromJson {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		TopicTrendSet topics = read("data/unigram_trend.txt", false, 2011);
+		TopicTrendSet topics = read("data/unigram_trend.txt", false, 2011, false);
 		System.out.println(topics);
 	}
 }
